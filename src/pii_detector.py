@@ -19,7 +19,9 @@ PATTERNS = {
     "PHONE": (re.compile(r"(?<!\d)(?:\+?91[- .]?)?[6-9]\d{9}(?!\d)"), 3),
     "AADHAAR": (re.compile(r"(?<!\d)\d{4}[ -]?\d{4}[ -]?\d{4}(?!\d)"), 5),
     "PAN": (re.compile(r"\b[A-Z]{5}\d{4}[A-Z]\b", re.I), 5),
-    "UPI": (re.compile(r"\b[a-zA-Z0-9._-]{2,}@[a-zA-Z]{2,}\b"), 4),
+    # Avoid treating ordinary email addresses as UPI IDs. Common UPI handles
+    # are intentionally supported as a high-confidence starter pattern.
+    "UPI": (re.compile(r"\b[a-zA-Z0-9._-]{2,}@(paytm|ybl|ibl|axl|oksbi|okaxis|okhdfcbank|upi)\b", re.I), 4),
     "IP_ADDRESS": (re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b"), 2),
 }
 
@@ -29,9 +31,8 @@ def detect_pii(text: str) -> List[Finding]:
     for kind, (pattern, severity) in PATTERNS.items():
         for match in pattern.finditer(text):
             findings.append(Finding(kind, match.group(), match.start(), match.end(), severity))
-    findings.sort(key=lambda x: (x.start, -(x.end - x.start)))
 
-    # Remove overlapping detections, retaining the higher-severity finding.
+    # Resolve overlaps by keeping the highest-severity match.
     selected: List[Finding] = []
     for item in sorted(findings, key=lambda x: (-x.severity, x.start, x.end)):
         if not any(item.start < x.end and x.start < item.end for x in selected):
