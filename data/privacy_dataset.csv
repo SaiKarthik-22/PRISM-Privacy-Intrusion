@@ -1,0 +1,9 @@
+text,intent,risk_label
+"Hello, how are you?",GENERAL,SAFE
+"Send my email user@example.com to the team",SHARING,HIGH
+"Please send my phone number 9876543210",SHARING,HIGH
+"My PAN is ABCDE1234F",GENERAL,HIGH
+"My Aadhaar is 1234 5678 9012",GENERAL,CRITICAL
+"The account was hacked and details were exposed",INCIDENT,HIGH
+"Can you tell me the weather today?",REQUESTING,SAFE
+"Please upload my details to the portal",SHARING,HIGH
