@@ -1,0 +1,6 @@
+# Optional research/model-training dependencies
+transformers>=4.45,<5
+datasets>=2.20,<4
+torch>=2.2,<3
+seqeval>=1.2,<2
+accelerate>=0.33,<2
